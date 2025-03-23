@@ -10,8 +10,13 @@
   "description": "",
   "dependencies": {
     "api_suporte_chamado": "file:",
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.0",
+    "sequelize": "^6.37.6",
+    "ws": "^8.18.1"
   }
 }
