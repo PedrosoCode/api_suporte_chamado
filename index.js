@@ -9,7 +9,10 @@ const dotenv = require('dotenv');
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server }); // Nome correto da instância
+const wss = new WebSocket.Server({ server });
+
+const ChatRoutes = require ('./routes/ChatRoute.js');
+const loginSignupRoutes = require('./routes/loginSignUpRoute');
 
 dotenv.config();
 
@@ -17,6 +20,9 @@ dotenv.config();
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
+
+app.use('/chat', ChatRoutes)
+app.use('/loginsignup', loginSignupRoutes);
 
 // Mapa para armazenar conexões por acesso
 const connections = new Map();
