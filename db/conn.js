@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 const conns = new Sequelize(
- 'suporte_database',
+ 'app_suporte',
  'root',
  'root',
   {

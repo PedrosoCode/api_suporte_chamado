@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `app_suporte` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `app_suporte`;
--- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: app_suporte
 -- ------------------------------------------------------
--- Server version	8.0.40
+-- Server version	8.0.41
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -38,6 +38,7 @@ CREATE TABLE `tb_cad_empresa` (
 
 LOCK TABLES `tb_cad_empresa` WRITE;
 /*!40000 ALTER TABLE `tb_cad_empresa` DISABLE KEYS */;
+INSERT INTO `tb_cad_empresa` VALUES (1,'fant 1','raz 1'),(2,'fant 2','raz 2');
 /*!40000 ALTER TABLE `tb_cad_empresa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,6 +55,7 @@ CREATE TABLE `tb_cad_usuario` (
   `usuario` varchar(255) DEFAULT NULL,
   `nome` varchar(255) DEFAULT NULL,
   `senha` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`codigo`,`codigo_empresa`),
   KEY `fK_usuario_empresa` (`codigo_empresa`),
   CONSTRAINT `fK_usuario_empresa` FOREIGN KEY (`codigo_empresa`) REFERENCES `tb_cad_empresa` (`codigo`)
@@ -66,6 +68,7 @@ CREATE TABLE `tb_cad_usuario` (
 
 LOCK TABLES `tb_cad_usuario` WRITE;
 /*!40000 ALTER TABLE `tb_cad_usuario` DISABLE KEYS */;
+INSERT INTO `tb_cad_usuario` VALUES (1,1,'teste',NULL,'$2b$10$iw.i0UtDfgvM8NL5X0957uo/AOrshDMv6Kj0odyZOhkyG9WJJE9/.','mail@teste'),(1,2,'pedroso',NULL,'$2b$10$Y0p/GpRxjN.kpuPoAbdNaenpAdJDCIJfgtNYFPi8sG59o6ORixPCK','mail@pedroso');
 /*!40000 ALTER TABLE `tb_cad_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -132,6 +135,102 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'app_suporte'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `sp_insert_login_signup_cadastro` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_login_signup_cadastro`(
+	p_codigo_empresa 	INT,  
+	p_nome_usuario 		VARCHAR(255),
+    p_email 			VARCHAR(255),
+    p_senha 			VARCHAR(255)
+)
+BEGIN
+
+	DECLARE v_codigo INT;
+
+	SET v_codigo = (
+					SELECT 
+						COALESCE(MAX(codigo), 0) + 1
+					FROM tb_cad_usuario 
+					WHERE codigo_empresa = p_codigo_empresa
+				   );
+
+	INSERT INTO tb_cad_usuario
+		(codigo,
+		usuario,
+		email,
+		senha,
+		codigo_empresa)
+	VALUES
+		(v_codigo,
+		p_nome_usuario,  
+		p_email,
+		p_senha,
+		p_codigo_empresa);
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_select_login_signup_combo_empresa` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_select_login_signup_combo_empresa`()
+BEGIN
+
+	SELECT * from tb_cad_empresa;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_validate_login_signup_senha_hash` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_validate_login_signup_senha_hash`(
+	p_codigo_empresa 	INT,  
+	p_nome_usuario 		VARCHAR(255)
+)
+BEGIN
+
+	SELECT 
+		senha,
+        codigo
+	FROM tb_cad_usuario
+    WHERE usuario = p_nome_usuario
+    AND   codigo_empresa = p_codigo_empresa;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -142,4 +241,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-01 22:26:26
+-- Dump completed on 2025-04-02  7:50:12
