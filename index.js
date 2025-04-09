@@ -6,15 +6,30 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
+const { Server } = require('socket.io');
+
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+dotenv.config();
+
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  },
+  path: "/socket.io/"
+});
 
 const ChatRoutes = require ('./routes/ChatRoute.js');
 const loginSignupRoutes = require('./routes/loginSignUpRoute');
 
-dotenv.config();
+const chatNamespace = io.of('/chat');
+const chatHandler = require('./handlers/chatHandler');
+
+chatNamespace.on('connection', (socket) => {
+  console.log(`Novo cliente no chat: ${socket.id}`);
+  chatHandler(chatNamespace, socket); // Passa o namespace específico
+});
 
 // Configurações existentes
 app.use(express.json());
@@ -24,51 +39,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/chat', ChatRoutes)
 app.use('/loginsignup', loginSignupRoutes);
 
-// Mapa para armazenar conexões por acesso
-const connections = new Map();
+// const onConnection = (socket) => {
+//   chatHandler(io, socket);
+// }
 
-wss.on('connection', (ws, req) => { // Correto: wss.on('connection')
-  // Extrair o acesso da URL
-  const acesso = req.url.split('/')[2];
+// io.on("connection", onConnection);
   
-  if (!connections.has(acesso)) {
-    connections.set(acesso, new Set());
-  }
-  const clientes = connections.get(acesso);
-  clientes.add(ws);
-
-  // Configurar handlers DENTRO da conexão
-  ws.on('message', (message) => {
-    const rawMessage = message.toString();
-    
-    try {
-      const parsedMessage = JSON.parse(rawMessage);
-      
-      // Converter para Date antes de enviar
-      const mensagemFormatada = {
-        ...parsedMessage,
-        dDataEnvio: new Date(parsedMessage.dDataEnvio)
-      };
-  
-      clientes.forEach(client => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(mensagemFormatada));
-        }
-      });
-    } catch (error) {
-      console.error('Mensagem inválida:', error);
-    }
-  });
-
-  ws.on('close', () => {
-    clientes.delete(ws);
-    if (clientes.size === 0) {
-      connections.delete(acesso);
-    }
-  });
-});
-
-// Mantenha suas rotas REST aqui...
 
 // Iniciar servidor na porta correta
 server.listen(3000, () => {
