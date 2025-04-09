@@ -13,6 +13,10 @@ const app = express();
 const server = http.createServer(app);
 dotenv.config();
 
+app.use(express.json());
+app.use(cors());
+app.use(express.urlencoded({ extended: false }));
+
 const io = new Server(server, {
   cors: {
     origin: '*',
@@ -25,28 +29,17 @@ const loginSignupRoutes = require('./routes/loginSignUpRoute');
 
 const chatNamespace = io.of('/chat');
 const chatHandler = require('./handlers/chatHandler');
+const { validaTokenSocket } = require('./utils/validaTokenSocket.js');
 
+chatNamespace.use(validaTokenSocket);
 chatNamespace.on('connection', (socket) => {
-  console.log(`Novo cliente no chat: ${socket.id}`);
-  chatHandler(chatNamespace, socket); // Passa o namespace específico
+  console.log(`Novo cliente autenticado: ${socket.jwtInfo.jwt_nCodigoUsuario}`);
+  chatHandler(chatNamespace, socket);
 });
-
-// Configurações existentes
-app.use(express.json());
-app.use(cors());
-app.use(express.urlencoded({ extended: false }));
 
 app.use('/chat', ChatRoutes)
 app.use('/loginsignup', loginSignupRoutes);
 
-// const onConnection = (socket) => {
-//   chatHandler(io, socket);
-// }
-
-// io.on("connection", onConnection);
-  
-
-// Iniciar servidor na porta correta
 server.listen(3000, () => {
   console.log('Servidor HTTP e WebSocket rodando na porta 3000');
 });
