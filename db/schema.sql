@@ -95,7 +95,7 @@ CREATE TABLE `tb_chat_sessao` (
 
 LOCK TABLES `tb_chat_sessao` WRITE;
 /*!40000 ALTER TABLE `tb_chat_sessao` DISABLE KEYS */;
-INSERT INTO `tb_chat_sessao` VALUES (1,2,'chat 1'),(2,2,'teste');
+INSERT INTO `tb_chat_sessao` VALUES (1,2,'chat 1'),(2,2,'teste'),(3,2,'oi');
 /*!40000 ALTER TABLE `tb_chat_sessao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -112,6 +112,7 @@ CREATE TABLE `tb_chat_sessao_mensagem` (
   `codigo_empresa` int NOT NULL,
   `texto` varchar(500) DEFAULT NULL,
   `codigo_remetente` int DEFAULT NULL,
+  `data_input` datetime DEFAULT NULL,
   PRIMARY KEY (`codigo`,`codigo_chat`,`codigo_empresa`),
   KEY `fk_mensagem_usuario` (`codigo_empresa`,`codigo_remetente`),
   KEY `fk_mensagem_chat` (`codigo_chat`,`codigo_empresa`),
@@ -126,6 +127,7 @@ CREATE TABLE `tb_chat_sessao_mensagem` (
 
 LOCK TABLES `tb_chat_sessao_mensagem` WRITE;
 /*!40000 ALTER TABLE `tb_chat_sessao_mensagem` DISABLE KEYS */;
+INSERT INTO `tb_chat_sessao_mensagem` VALUES (1,3,2,'agora vai',1,'2025-04-09 23:12:34'),(2,3,2,'mais um',1,'2025-04-09 23:13:24');
 /*!40000 ALTER TABLE `tb_chat_sessao_mensagem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -172,6 +174,56 @@ BEGIN
     
     SELECT p_acesso AS descricao;
 
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_insert_chat_sessao_mensagem` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_chat_sessao_mensagem`(
+	IN p_codigo_chat		INT,
+    IN p_codigo_empresa 	INT,  
+    IN p_codigo_remetente 	INT,
+    IN p_texto_mensagem 	VARCHAR(500)
+)
+BEGIN
+
+    DECLARE p_codigo INT;
+
+    SELECT COALESCE(MAX(codigo), 0) + 1 
+    INTO p_codigo
+    FROM tb_chat_sessao_mensagem
+    WHERE codigo_empresa = p_codigo_empresa
+    AND	codigo_chat = p_codigo_chat;
+
+
+    INSERT INTO `app_suporte`.`tb_chat_sessao_mensagem`
+		(codigo,
+		 codigo_chat,
+		 codigo_empresa,
+		 texto,
+		 codigo_remetente,
+		 data_input
+         )
+	VALUES
+		(p_codigo,
+		 p_codigo_chat,
+		 p_codigo_empresa,
+		 p_texto_mensagem,
+		 p_codigo_remetente,
+		 now()
+        );
+    
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -284,4 +336,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-08 22:19:12
+-- Dump completed on 2025-04-09 20:14:55
