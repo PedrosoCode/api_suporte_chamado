@@ -83,6 +83,8 @@ CREATE TABLE `tb_chat_sessao` (
   `codigo` bigint NOT NULL,
   `codigo_empresa` int NOT NULL,
   `assunto` varchar(255) DEFAULT NULL,
+  `codigo_usuario_abertura` int DEFAULT NULL,
+  `data_abertura` datetime DEFAULT NULL,
   PRIMARY KEY (`codigo`,`codigo_empresa`),
   KEY `fk_chat_empresa` (`codigo_empresa`),
   CONSTRAINT `fk_chat_empresa` FOREIGN KEY (`codigo_empresa`) REFERENCES `tb_cad_empresa` (`codigo`)
@@ -95,7 +97,7 @@ CREATE TABLE `tb_chat_sessao` (
 
 LOCK TABLES `tb_chat_sessao` WRITE;
 /*!40000 ALTER TABLE `tb_chat_sessao` DISABLE KEYS */;
-INSERT INTO `tb_chat_sessao` VALUES (1,2,'chat 1'),(2,2,'teste'),(3,2,'oi');
+INSERT INTO `tb_chat_sessao` VALUES (1,2,'chat 1',1,NULL),(2,2,'teste',1,NULL),(3,2,'oi',2,NULL),(4,2,'procedure',1,'2025-04-10 10:01:51');
 /*!40000 ALTER TABLE `tb_chat_sessao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -127,7 +129,7 @@ CREATE TABLE `tb_chat_sessao_mensagem` (
 
 LOCK TABLES `tb_chat_sessao_mensagem` WRITE;
 /*!40000 ALTER TABLE `tb_chat_sessao_mensagem` DISABLE KEYS */;
-INSERT INTO `tb_chat_sessao_mensagem` VALUES (1,3,2,'um',1,'2025-04-09 23:57:27'),(2,3,2,'dois',2,'2025-04-09 23:57:30'),(3,3,2,'tres',1,'2025-04-09 23:57:34'),(4,3,2,'quatro',2,'2025-04-09 23:57:38'),(5,3,2,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam lacinia laoreet odio, et pulvinar lorem rutrum non. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; In vitae odio ac magna accumsan tristique. Nulla lobortis nibh in dolor fermentum, eu consequat nisl volutpat. Quisque pharetra metus ac risus congue consectetur. Donec efficitur ultricies dignissim. Praes',1,'2025-04-09 23:59:20');
+INSERT INTO `tb_chat_sessao_mensagem` VALUES (1,3,2,'um',1,'2025-04-09 23:57:27'),(1,4,2,'socket on',2,'2025-04-10 10:02:13'),(2,3,2,'dois',2,'2025-04-09 23:57:30'),(2,4,2,'conectado',1,'2025-04-10 10:02:30'),(3,3,2,'tres',1,'2025-04-09 23:57:34'),(3,4,2,'teste',2,'2025-04-10 10:02:41'),(4,3,2,'quatro',2,'2025-04-09 23:57:38'),(5,3,2,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam lacinia laoreet odio, et pulvinar lorem rutrum non. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; In vitae odio ac magna accumsan tristique. Nulla lobortis nibh in dolor fermentum, eu consequat nisl volutpat. Quisque pharetra metus ac risus congue consectetur. Donec efficitur ultricies dignissim. Praes',1,'2025-04-09 23:59:20'),(6,3,2,'finalizando',2,'2025-04-10 00:26:43');
 /*!40000 ALTER TABLE `tb_chat_sessao_mensagem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,11 +167,15 @@ BEGIN
     INSERT INTO tb_chat_sessao (
         codigo,
         codigo_empresa,
-        assunto
+        assunto,
+        codigo_usuario_abertura,
+        data_abertura
     ) VALUES (
         p_acesso,
         p_codigo_empresa,
-        p_assunto
+        p_assunto,
+        p_codigo_usuario,
+        NOW()
     );
     
     SELECT p_acesso AS descricao;
@@ -335,6 +341,37 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_select_pool_chamados` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_select_pool_chamados`()
+BEGIN
+
+	SELECT 
+		tb_chat_sessao.codigo AS nCodigoAcesso,
+        tb_chat_sessao.assunto AS sAssuntoChamado,
+        tb_cad_empresa.nome_fantasia AS sNomeEmpresa,
+        tb_cad_usuario.usuario  AS sUsuarioAbertura
+    FROM tb_chat_sessao
+    INNER JOIN tb_cad_empresa 
+    ON tb_cad_empresa.codigo = tb_chat_sessao.codigo_empresa
+    INNER JOIN tb_cad_usuario
+    ON tb_cad_usuario.codigo = tb_chat_sessao.codigo_usuario_abertura
+    AND tb_cad_usuario.codigo_empresa = tb_chat_sessao.codigo_empresa;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_validate_login_signup_senha_hash` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -374,4 +411,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-09 21:26:03
+-- Dump completed on 2025-04-10  7:10:13
