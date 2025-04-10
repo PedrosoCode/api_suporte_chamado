@@ -57,7 +57,33 @@ const novoAcesso = async (req, res) => {
   }
 };
 
+const loadInicial = async (req, res) => {
+  try {
+
+    const {
+      nCodigoChat,
+    } = req.body;
+
+    const execQuery = `call sp_select_chat_sessao_mensagem(:p_codigo_chat,
+                                                           :p_codigo_empresa
+                                                           )`;
+
+    const results = await conn.query(execQuery, {
+      replacements: {
+        p_codigo_empresa: req.jwtInfo.jwt_nCodigoEmpresa,
+        p_codigo_chat: nCodigoChat, 
+      },
+    });
+
+    res.status(200).json(results);
+  } catch (err) {
+    console.error('Erro no carregamento inicial:', err);
+    res.status(500).json({ error: 'Erro no carregamento inicial.' });
+  }
+};
+
 module.exports = {
   salvarMensagem,
   novoAcesso,
+  loadInicial
 };
