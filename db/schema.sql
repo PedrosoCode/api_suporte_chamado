@@ -293,15 +293,19 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_select_chat_sessao_mensagem`(
 BEGIN
 
 	SELECT 
-		codigo AS nCodigoMensagem,
-        codigo_chat AS nCodigoChat,
-        codigo_empresa AS nCodigoEmpresa,
-        codigo_remetente AS nRemetente,
-        data_input AS dDataEnvio,
-        texto AS sTexto
+		tb_chat_sessao_mensagem.codigo AS nCodigoMensagem,
+        tb_chat_sessao_mensagem.codigo_chat AS nCodigoChat,
+        tb_chat_sessao_mensagem.codigo_empresa AS nCodigoEmpresa,
+        tb_chat_sessao_mensagem.codigo_remetente AS nRemetente,
+        tb_chat_sessao_mensagem.data_input AS dDataEnvio,
+        tb_chat_sessao_mensagem.texto AS sTexto,
+        tb_cad_usuario.usuario AS sNomeUsuario
     FROM tb_chat_sessao_mensagem
-    WHERE codigo_chat = p_codigo_chat
-    AND	codigo_empresa = p_codigo_empresa
+    INNER JOIN tb_cad_usuario
+    ON tb_cad_usuario.codigo = tb_chat_sessao_mensagem.codigo_remetente
+    AND tb_cad_usuario.codigo_empresa = tb_chat_sessao_mensagem.codigo_empresa
+    WHERE tb_chat_sessao_mensagem.codigo_chat = p_codigo_chat
+    AND	tb_chat_sessao_mensagem.codigo_empresa = p_codigo_empresa
     ORDER BY data_input ASC;
 
 END ;;
@@ -370,4 +374,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-09 21:03:27
+-- Dump completed on 2025-04-09 21:26:03
