@@ -26,6 +26,7 @@ const io = new Server(server, {
 
 const ChatRoutes = require ('./routes/ChatRoute.js');
 const loginSignupRoutes = require('./routes/loginSignUpRoute');
+const hubRoutes = require('./routes/hubRoute.js');
 
 const chatNamespace = io.of('/chat');
 const chatHandler = require('./handlers/chatHandler');
@@ -39,6 +40,7 @@ chatNamespace.on('connection', (socket) => {
 
 app.use('/chat', ChatRoutes)
 app.use('/loginsignup', loginSignupRoutes);
+app.use('/hub', hubRoutes);
 
 server.listen(3000, () => {
   console.log('Servidor HTTP e WebSocket rodando na porta 3000');
