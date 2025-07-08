@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `app_suporte` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `app_suporte`;
--- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: app_suporte
 -- ------------------------------------------------------
--- Server version	8.0.40
+-- Server version	8.0.42-0ubuntu0.24.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -28,6 +28,7 @@ CREATE TABLE `tb_cad_empresa` (
   `codigo` int NOT NULL,
   `nome_fantasia` varchar(255) DEFAULT NULL,
   `razao_social` varchar(255) DEFAULT NULL,
+  `presta_suporte` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`codigo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -38,7 +39,7 @@ CREATE TABLE `tb_cad_empresa` (
 
 LOCK TABLES `tb_cad_empresa` WRITE;
 /*!40000 ALTER TABLE `tb_cad_empresa` DISABLE KEYS */;
-INSERT INTO `tb_cad_empresa` VALUES (1,'fant 1','raz 1'),(2,'fant 2','raz 2');
+INSERT INTO `tb_cad_empresa` VALUES (1,'SUPORTE','SUPORTE & SUPORTE',1),(2,'INDUSTRIAS','INDUSTRIAS - SA',0),(3,'VAREJO','VAREJOS SA',0);
 /*!40000 ALTER TABLE `tb_cad_empresa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -68,7 +69,7 @@ CREATE TABLE `tb_cad_usuario` (
 
 LOCK TABLES `tb_cad_usuario` WRITE;
 /*!40000 ALTER TABLE `tb_cad_usuario` DISABLE KEYS */;
-INSERT INTO `tb_cad_usuario` VALUES (1,1,'teste',NULL,'$2b$10$iw.i0UtDfgvM8NL5X0957uo/AOrshDMv6Kj0odyZOhkyG9WJJE9/.','mail@teste'),(1,2,'pedroso',NULL,'$2b$10$Y0p/GpRxjN.kpuPoAbdNaenpAdJDCIJfgtNYFPi8sG59o6ORixPCK','mail@pedroso'),(2,2,'teste',NULL,'a','mail@teste');
+INSERT INTO `tb_cad_usuario` VALUES (1,1,'suporte',NULL,'$2b$10$b0SXGEm5T4N4jJAj2xCja.Pd4RrZdkNQzb898z2wAunKdhGQBqbcy','suporte@mail'),(1,3,'financeiro',NULL,'$2b$10$T5xPzEQrH9UY2DdEcperZ.j81bhvOn2cr2CD66tyuYX/OMuLtH3la','financeiro@varejo'),(2,1,'suporteDois',NULL,'$2b$10$DCNC.eS9WdVThN8GNzMJGeXYv57XNixEZjziiT3WRLsaOAXa1VbFu','suporteDois@mail'),(2,3,'faturamento',NULL,'$2b$10$C4h7g9M7wYPwBcnLluDVVO65waeQ0TqoYvNmLuNOyPzf5/pVP1SNi','faturamento@varejo'),(3,2,'teste@teste',NULL,'$2b$10$UxXfLHgdAbPqLUDlO13ZJugCPj4KH8ph0pptj1XARrZ469tUvrA0y','teste@teste'),(4,2,'faturamento',NULL,'$2b$10$M1xZ0asJzYjfmiLFbAwEy.A36Je0p0gctP.qYiru/LDxD5pGNkaUe','faturamento@industrias'),(5,2,'financeiro',NULL,'$2b$10$KWP/.NW4z1Ck9o1wBX9DWu/BXiUcrwtMv2lPO.kroIjGGidWtQOHm','financeiro@industrias');
 /*!40000 ALTER TABLE `tb_cad_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -97,7 +98,6 @@ CREATE TABLE `tb_chat_sessao` (
 
 LOCK TABLES `tb_chat_sessao` WRITE;
 /*!40000 ALTER TABLE `tb_chat_sessao` DISABLE KEYS */;
-INSERT INTO `tb_chat_sessao` VALUES (1,2,'chat 1',1,NULL),(2,2,'teste',1,NULL),(3,2,'oi',2,NULL),(4,2,'procedure',1,'2025-04-10 10:01:51');
 /*!40000 ALTER TABLE `tb_chat_sessao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,8 +129,31 @@ CREATE TABLE `tb_chat_sessao_mensagem` (
 
 LOCK TABLES `tb_chat_sessao_mensagem` WRITE;
 /*!40000 ALTER TABLE `tb_chat_sessao_mensagem` DISABLE KEYS */;
-INSERT INTO `tb_chat_sessao_mensagem` VALUES (1,3,2,'um',1,'2025-04-09 23:57:27'),(1,4,2,'socket on',2,'2025-04-10 10:02:13'),(2,3,2,'dois',2,'2025-04-09 23:57:30'),(2,4,2,'conectado',1,'2025-04-10 10:02:30'),(3,3,2,'tres',1,'2025-04-09 23:57:34'),(3,4,2,'teste',2,'2025-04-10 10:02:41'),(4,3,2,'quatro',2,'2025-04-09 23:57:38'),(5,3,2,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam lacinia laoreet odio, et pulvinar lorem rutrum non. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; In vitae odio ac magna accumsan tristique. Nulla lobortis nibh in dolor fermentum, eu consequat nisl volutpat. Quisque pharetra metus ac risus congue consectetur. Donec efficitur ultricies dignissim. Praes',1,'2025-04-09 23:59:20'),(6,3,2,'finalizando',2,'2025-04-10 00:26:43');
 /*!40000 ALTER TABLE `tb_chat_sessao_mensagem` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tb_stc_prioridade`
+--
+
+DROP TABLE IF EXISTS `tb_stc_prioridade`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tb_stc_prioridade` (
+  `codigo` int NOT NULL,
+  `descricao` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`codigo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_stc_prioridade`
+--
+
+LOCK TABLES `tb_stc_prioridade` WRITE;
+/*!40000 ALTER TABLE `tb_stc_prioridade` DISABLE KEYS */;
+INSERT INTO `tb_stc_prioridade` VALUES (1,'Baixa'),(2,'Média'),(3,'Alta'),(4,'Urgente');
+/*!40000 ALTER TABLE `tb_stc_prioridade` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -389,11 +412,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_validate_login_signup_senha_hash
 BEGIN
 
 	SELECT 
-		senha,
-        codigo
-	FROM tb_cad_usuario
+		usuario.senha,
+        usuario.codigo,
+        empresa.presta_suporte
+	FROM tb_cad_usuario usuario
+    INNER JOIN tb_cad_empresa empresa
+    ON  empresa.codigo = usuario.codigo_empresa
     WHERE usuario = p_nome_usuario
-    AND   codigo_empresa = p_codigo_empresa;
+    AND   usuario.codigo_empresa = p_codigo_empresa;
 
 END ;;
 DELIMITER ;
@@ -411,4 +437,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-10  7:10:13
+-- Dump completed on 2025-07-07 21:39:31

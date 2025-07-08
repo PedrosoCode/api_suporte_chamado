@@ -88,7 +88,8 @@ const login = async (req, res) => {
     const payload = {
       jwt_sNomeUsuario: sNomeUsuario,
       jwt_nCodigoEmpresa: nCodigoEmpresa,
-      jwt_nCodigoUsuario: user.codigo 
+      jwt_nCodigoUsuario: user.codigo,
+      jwt_bPrestaSuporte: user.presta_suporte
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '12h' });
