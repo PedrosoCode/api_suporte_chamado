@@ -62,6 +62,7 @@ const loadInicial = async (req, res) => {
 
     const {
       nCodigoChat,
+      nCodigoEmpresa
     } = req.body;
 
     const execQuery = `call sp_select_chat_sessao_mensagem(:p_codigo_chat,
@@ -70,7 +71,7 @@ const loadInicial = async (req, res) => {
 
     const results = await conn.query(execQuery, {
       replacements: {
-        p_codigo_empresa: req.jwtInfo.jwt_nCodigoEmpresa,
+        p_codigo_empresa: nCodigoEmpresa,
         p_codigo_chat: nCodigoChat, 
       },
     });

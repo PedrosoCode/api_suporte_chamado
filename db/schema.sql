@@ -44,6 +44,55 @@ INSERT INTO `tb_cad_empresa` VALUES (1,'SUPORTE','SUPORTE & SUPORTE',1),(2,'INDU
 UNLOCK TABLES;
 
 --
+-- Table structure for table `tb_cad_grupo_exibicao`
+--
+
+DROP TABLE IF EXISTS `tb_cad_grupo_exibicao`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tb_cad_grupo_exibicao` (
+  `codigo` int NOT NULL,
+  `descricao` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`codigo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_cad_grupo_exibicao`
+--
+
+LOCK TABLES `tb_cad_grupo_exibicao` WRITE;
+/*!40000 ALTER TABLE `tb_cad_grupo_exibicao` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tb_cad_grupo_exibicao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tb_cad_grupo_exibicao_empresa`
+--
+
+DROP TABLE IF EXISTS `tb_cad_grupo_exibicao_empresa`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tb_cad_grupo_exibicao_empresa` (
+  `codigo_grupo` int NOT NULL,
+  `codigo_empresa_exibicao` int NOT NULL,
+  PRIMARY KEY (`codigo_grupo`,`codigo_empresa_exibicao`),
+  KEY `fk_cad_grupo_empresa` (`codigo_empresa_exibicao`),
+  CONSTRAINT `fk_cad_grupo` FOREIGN KEY (`codigo_grupo`) REFERENCES `tb_cad_grupo_exibicao` (`codigo`),
+  CONSTRAINT `fk_cad_grupo_empresa` FOREIGN KEY (`codigo_empresa_exibicao`) REFERENCES `tb_cad_empresa` (`codigo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_cad_grupo_exibicao_empresa`
+--
+
+LOCK TABLES `tb_cad_grupo_exibicao_empresa` WRITE;
+/*!40000 ALTER TABLE `tb_cad_grupo_exibicao_empresa` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tb_cad_grupo_exibicao_empresa` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tb_cad_usuario`
 --
 
@@ -57,6 +106,7 @@ CREATE TABLE `tb_cad_usuario` (
   `nome` varchar(255) DEFAULT NULL,
   `senha` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
+  `codigo_grupo_exibicao` int DEFAULT NULL,
   PRIMARY KEY (`codigo`,`codigo_empresa`),
   KEY `fK_usuario_empresa` (`codigo_empresa`),
   CONSTRAINT `fK_usuario_empresa` FOREIGN KEY (`codigo_empresa`) REFERENCES `tb_cad_empresa` (`codigo`)
@@ -69,7 +119,7 @@ CREATE TABLE `tb_cad_usuario` (
 
 LOCK TABLES `tb_cad_usuario` WRITE;
 /*!40000 ALTER TABLE `tb_cad_usuario` DISABLE KEYS */;
-INSERT INTO `tb_cad_usuario` VALUES (1,1,'suporte',NULL,'$2b$10$b0SXGEm5T4N4jJAj2xCja.Pd4RrZdkNQzb898z2wAunKdhGQBqbcy','suporte@mail'),(1,3,'financeiro',NULL,'$2b$10$T5xPzEQrH9UY2DdEcperZ.j81bhvOn2cr2CD66tyuYX/OMuLtH3la','financeiro@varejo'),(2,1,'suporteDois',NULL,'$2b$10$DCNC.eS9WdVThN8GNzMJGeXYv57XNixEZjziiT3WRLsaOAXa1VbFu','suporteDois@mail'),(2,3,'faturamento',NULL,'$2b$10$C4h7g9M7wYPwBcnLluDVVO65waeQ0TqoYvNmLuNOyPzf5/pVP1SNi','faturamento@varejo'),(3,2,'teste@teste',NULL,'$2b$10$UxXfLHgdAbPqLUDlO13ZJugCPj4KH8ph0pptj1XARrZ469tUvrA0y','teste@teste'),(4,2,'faturamento',NULL,'$2b$10$M1xZ0asJzYjfmiLFbAwEy.A36Je0p0gctP.qYiru/LDxD5pGNkaUe','faturamento@industrias'),(5,2,'financeiro',NULL,'$2b$10$KWP/.NW4z1Ck9o1wBX9DWu/BXiUcrwtMv2lPO.kroIjGGidWtQOHm','financeiro@industrias');
+INSERT INTO `tb_cad_usuario` VALUES (1,1,'suporte',NULL,'$2b$10$b0SXGEm5T4N4jJAj2xCja.Pd4RrZdkNQzb898z2wAunKdhGQBqbcy','suporte@mail',NULL),(1,3,'financeiro',NULL,'$2b$10$T5xPzEQrH9UY2DdEcperZ.j81bhvOn2cr2CD66tyuYX/OMuLtH3la','financeiro@varejo',NULL),(2,1,'suporteDois',NULL,'$2b$10$DCNC.eS9WdVThN8GNzMJGeXYv57XNixEZjziiT3WRLsaOAXa1VbFu','suporteDois@mail',NULL),(2,3,'faturamento',NULL,'$2b$10$C4h7g9M7wYPwBcnLluDVVO65waeQ0TqoYvNmLuNOyPzf5/pVP1SNi','faturamento@varejo',NULL),(3,2,'teste@teste',NULL,'$2b$10$UxXfLHgdAbPqLUDlO13ZJugCPj4KH8ph0pptj1XARrZ469tUvrA0y','teste@teste',NULL),(4,2,'faturamento',NULL,'$2b$10$M1xZ0asJzYjfmiLFbAwEy.A36Je0p0gctP.qYiru/LDxD5pGNkaUe','faturamento@industrias',NULL),(5,2,'financeiro',NULL,'$2b$10$KWP/.NW4z1Ck9o1wBX9DWu/BXiUcrwtMv2lPO.kroIjGGidWtQOHm','financeiro@industrias',NULL);
 /*!40000 ALTER TABLE `tb_cad_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,6 +148,7 @@ CREATE TABLE `tb_chat_sessao` (
 
 LOCK TABLES `tb_chat_sessao` WRITE;
 /*!40000 ALTER TABLE `tb_chat_sessao` DISABLE KEYS */;
+INSERT INTO `tb_chat_sessao` VALUES (1,3,'faturamento',2,'2025-07-09 02:04:43');
 /*!40000 ALTER TABLE `tb_chat_sessao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,15 +162,16 @@ DROP TABLE IF EXISTS `tb_chat_sessao_mensagem`;
 CREATE TABLE `tb_chat_sessao_mensagem` (
   `codigo` bigint NOT NULL,
   `codigo_chat` bigint NOT NULL,
-  `codigo_empresa` int NOT NULL,
+  `codigo_empresa_chat` int NOT NULL,
   `texto` varchar(500) DEFAULT NULL,
   `codigo_remetente` int DEFAULT NULL,
+  `codigo_empresa_remetente` int DEFAULT NULL,
   `data_input` datetime DEFAULT NULL,
-  PRIMARY KEY (`codigo`,`codigo_chat`,`codigo_empresa`),
-  KEY `fk_mensagem_usuario` (`codigo_empresa`,`codigo_remetente`),
-  KEY `fk_mensagem_chat` (`codigo_chat`,`codigo_empresa`),
-  CONSTRAINT `fk_mensagem_chat` FOREIGN KEY (`codigo_chat`, `codigo_empresa`) REFERENCES `tb_chat_sessao` (`codigo`, `codigo_empresa`),
-  CONSTRAINT `fk_mensagem_usuario` FOREIGN KEY (`codigo_empresa`, `codigo_remetente`) REFERENCES `tb_cad_usuario` (`codigo_empresa`, `codigo`)
+  PRIMARY KEY (`codigo`,`codigo_chat`,`codigo_empresa_chat`),
+  KEY `fk_mensagem_usuario` (`codigo_empresa_remetente`,`codigo_remetente`),
+  KEY `fk_mensagem_chat` (`codigo_chat`,`codigo_empresa_chat`),
+  CONSTRAINT `fk_mensagem_chat` FOREIGN KEY (`codigo_chat`, `codigo_empresa_chat`) REFERENCES `tb_chat_sessao` (`codigo`, `codigo_empresa`),
+  CONSTRAINT `fk_mensagem_usuario` FOREIGN KEY (`codigo_empresa_remetente`, `codigo_remetente`) REFERENCES `tb_cad_usuario` (`codigo_empresa`, `codigo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -129,6 +181,7 @@ CREATE TABLE `tb_chat_sessao_mensagem` (
 
 LOCK TABLES `tb_chat_sessao_mensagem` WRITE;
 /*!40000 ALTER TABLE `tb_chat_sessao_mensagem` DISABLE KEYS */;
+INSERT INTO `tb_chat_sessao_mensagem` VALUES (1,1,3,'help',2,3,'2025-07-09 02:04:47'),(2,1,3,'fatura!',1,3,'2025-07-09 02:05:48'),(3,1,3,'suporte!',1,1,'2025-07-09 02:06:28');
 /*!40000 ALTER TABLE `tb_chat_sessao_mensagem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -220,10 +273,11 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_chat_sessao_mensagem`(
-	IN p_codigo_chat		INT,
-    IN p_codigo_empresa 	INT,  
-    IN p_codigo_remetente 	INT,
-    IN p_texto_mensagem 	VARCHAR(500)
+	IN p_codigo_chat					INT,
+    IN p_codigo_empresa_chat 			INT,  
+    IN p_codigo_empresa_remetente 		INT,  
+    IN p_codigo_remetente 				INT,
+    IN p_texto_mensagem 				VARCHAR(500)
 )
 BEGIN
 
@@ -232,14 +286,15 @@ BEGIN
     SELECT COALESCE(MAX(codigo), 0) + 1 
     INTO p_codigo
     FROM tb_chat_sessao_mensagem
-    WHERE codigo_empresa = p_codigo_empresa
+    WHERE codigo_empresa_chat = p_codigo_empresa_chat
     AND	codigo_chat = p_codigo_chat;
 
 
     INSERT INTO `app_suporte`.`tb_chat_sessao_mensagem`
 		(codigo,
 		 codigo_chat,
-		 codigo_empresa,
+		 codigo_empresa_chat,
+         codigo_empresa_remetente,
 		 texto,
 		 codigo_remetente,
 		 data_input
@@ -247,7 +302,8 @@ BEGIN
 	VALUES
 		(p_codigo,
 		 p_codigo_chat,
-		 p_codigo_empresa,
+		 p_codigo_empresa_chat,
+         p_codigo_empresa_remetente,
 		 p_texto_mensagem,
 		 p_codigo_remetente,
 		 now()
@@ -320,23 +376,22 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_select_chat_sessao_mensagem`(
     IN p_codigo_empresa INT
 )
 BEGIN
-
 	SELECT 
 		tb_chat_sessao_mensagem.codigo AS nCodigoMensagem,
         tb_chat_sessao_mensagem.codigo_chat AS nCodigoChat,
-        tb_chat_sessao_mensagem.codigo_empresa AS nCodigoEmpresa,
+        tb_chat_sessao_mensagem.codigo_empresa_chat AS nCodigoEmpresaChat,
+        tb_chat_sessao_mensagem.codigo_empresa_remetente AS nCodigoEmpresaRemetente,
         tb_chat_sessao_mensagem.codigo_remetente AS nRemetente,
         tb_chat_sessao_mensagem.data_input AS dDataEnvio,
         tb_chat_sessao_mensagem.texto AS sTexto,
         tb_cad_usuario.usuario AS sNomeUsuario
     FROM tb_chat_sessao_mensagem
     INNER JOIN tb_cad_usuario
-    ON tb_cad_usuario.codigo = tb_chat_sessao_mensagem.codigo_remetente
-    AND tb_cad_usuario.codigo_empresa = tb_chat_sessao_mensagem.codigo_empresa
+      ON tb_cad_usuario.codigo = tb_chat_sessao_mensagem.codigo_remetente
+     AND tb_cad_usuario.codigo_empresa = tb_chat_sessao_mensagem.codigo_empresa_remetente
     WHERE tb_chat_sessao_mensagem.codigo_chat = p_codigo_chat
-    AND	tb_chat_sessao_mensagem.codigo_empresa = p_codigo_empresa
+      AND tb_chat_sessao_mensagem.codigo_empresa_chat = p_codigo_empresa
     ORDER BY data_input ASC;
-
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -437,4 +492,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-07 21:39:31
+-- Dump completed on 2025-07-08 23:25:33
